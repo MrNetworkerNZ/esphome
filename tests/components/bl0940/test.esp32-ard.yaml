@@ -1,5 +1,5 @@
 uart:
-  - id: uart_bl0939
+  - id: uart_bl0940
     tx_pin:
       number: 17
     rx_pin:
