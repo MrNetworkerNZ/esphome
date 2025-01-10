@@ -85,7 +85,7 @@ class BL0940 : public PollingComponent, public uart::UARTDevice {
   sensor::Sensor *external_temperature_sensor_{nullptr};
 
   // Max difference between two measurements of the temperature. Used to avoid noise.
-  float max_temperature_diff_{0};
+  float max_temperature_diff_{5};
   // Divide by this to turn into Watt
   float power_reference_ = BL0940_PREF;
   // Divide by this to turn into Volt
