@@ -115,15 +115,19 @@ void BL0940::received_package_(const DataPacket *data) const {
   if (energy_sensor_ != nullptr) {
     energy_sensor_->publish_state(total_energy_consumption);
   }
-  if (voltage_sensor_ && this->current_sensor_ != nullptr) {
-    const float apparent_power = v_rms * i_rms;
-    if (this->apparent_power_sensor_ != nullptr) {
-      this->apparent_power_sensor_->publish_state(apparent_power);
-    }
-  }    
+
   ESP_LOGV(TAG, "BL0940: U %fV, I %fA, P %fW, Cnt %" PRId32 ", ∫P %fkWh, T1 %f°C, T2 %f°C", v_rms, i_rms, watt, cf_cnt,
-           total_energy_consumption, tps1, tps2, apparent_power);
+           total_energy_consumption, tps1, tps2);
 }
+
+void BL0940::caculate_extras() { 
+  const float apparent_power = v_rms * i_rms;
+
+  if (apparent_power_sensor_ != nullptr) {
+    apparent_power_sensor_->publish_state(apparent_power);
+  }
+}
+
 
 void BL0940::dump_config() {  // NOLINT(readability-function-cognitive-complexity)
   ESP_LOGCONFIG(TAG, "BL0940:");
