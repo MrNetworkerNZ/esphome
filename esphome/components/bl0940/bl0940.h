@@ -84,7 +84,9 @@ class BL0940 : public PollingComponent, public uart::UARTDevice {
     this->voltage_reference_ = voltage_ref;
     this->voltage_reference_set_ = true;
   }
-
+  void set_apparent_power_sensor(sensor::Sensor *apparent_power_sensor) {
+    apparent_power_sensor_ = apparent_power_sensor;
+  }
   void loop() override;
 
   void update() override;
@@ -100,6 +102,7 @@ class BL0940 : public PollingComponent, public uart::UARTDevice {
   sensor::Sensor *energy_sensor_{nullptr};
   sensor::Sensor *internal_temperature_sensor_{nullptr};
   sensor::Sensor *external_temperature_sensor_{nullptr};
+  sensor::Sensor *apparent_power_sensor_{nullptr};
 
   // Max difference between two measurements of the temperature. Used to avoid noise.
   float max_temperature_diff_{5};
