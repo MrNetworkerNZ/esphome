@@ -120,7 +120,7 @@ void BL0940::received_package_(const DataPacket *data) const {
     this->apparent_power_sensor_->publish_state(apparent_power);
   }
   ESP_LOGV(TAG, "BL0940: U %fV, I %fA, P %fW, Cnt %" PRId32 ", ∫P %fkWh, T1 %f°C, T2 %f°C", v_rms, i_rms, watt, cf_cnt,
-           total_energy_consumption, tps1, tps2);
+           total_energy_consumption, tps1, tps2, apparent_power);
 }
 
 void BL0940::dump_config() {  // NOLINT(readability-function-cognitive-complexity)
