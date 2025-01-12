@@ -38,6 +38,7 @@ void BL0940::loop() {
   if (read_array((uint8_t *) &buffer, sizeof(buffer))) {
     if (validate_checksum(&buffer)) {
       received_package_(&buffer);
+      caculate_extras_(&buffer);
     }
   } else {
     ESP_LOGW(TAG, "Junk on wire. Throwing away partial message");
