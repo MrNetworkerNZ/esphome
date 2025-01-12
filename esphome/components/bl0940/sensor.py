@@ -9,6 +9,7 @@ from esphome.const import (
     CONF_INTERNAL_TEMPERATURE,
     CONF_POWER,
     CONF_VOLTAGE,
+    CONF_APPARENT_POWER,
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_POWER,
@@ -20,6 +21,7 @@ from esphome.const import (
     UNIT_KILOWATT_HOURS,
     UNIT_VOLT,
     UNIT_WATT,
+    UNIT_VOLT_AMPS,
     STATE_CLASS_TOTAL_INCREASING,
 )
 
@@ -74,6 +76,12 @@ CONFIG_SCHEMA = (
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
+             cv.Optional(CONF_APPARENT_POWER): sensor.sensor_schema(
+                unit_of_measurement=UNIT_VOLT_AMPS,
+                accuracy_decimals=1,
+                device_class=DEVICE_CLASS_APPARENT_POWER,
+              state_class=STATE_CLASS_MEASUREMENT,               
+            ),
             cv.Optional(CONF_CURRENT_REFERENCE): cv.float_,
             cv.Optional(CONF_ENERGY_REFERENCE): cv.float_,
             cv.Optional(CONF_POWER_REFERENCE): cv.float_,
@@ -108,6 +116,8 @@ async def to_code(config):
     if external_temperature_config := config.get(CONF_EXTERNAL_TEMPERATURE):
         sens = await sensor.new_sensor(external_temperature_config)
         cg.add(var.set_external_temperature_sensor(sens))
+    if apparent_power_config := config.get(CONF_APPARENT_POWER):
+        sens = await sensor.new_sensor(apparent_power_config)
     if (current_reference := config.get(CONF_CURRENT_REFERENCE, None)) is not None:
         cg.add(var.set_current_reference(current_reference))
     if (voltage_reference := config.get(CONF_VOLTAGE_REFERENCE, None)) is not None:
