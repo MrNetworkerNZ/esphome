@@ -93,7 +93,10 @@ void BL0940::received_package_(const DataPacket *data) const {
     ESP_LOGI(TAG, "Invalid data. Header mismatch: %d", data->frame_header);
     return;
   }
-
+  
+  bool have_current = adj & 0x20;
+  bool have_voltage = adj & 0x40;
+  
   float v_rms = (float) to_uint32_t(data->v_rms) / voltage_reference_;
   float i_rms = (float) to_uint32_t(data->i_rms) / current_reference_;
   float watt = (float) to_int32_t(data->watt) / power_reference_;
@@ -115,7 +118,11 @@ void BL0940::received_package_(const DataPacket *data) const {
   if (energy_sensor_ != nullptr) {
     energy_sensor_->publish_state(total_energy_consumption);
   }
-
+  if (have_voltage && have_current) {
+    const float apparent_power = v_rms * i_rms;
+    if (this->apparent_power_sensor_ != nullptr) {
+      this->apparent_power_sensor_->publish_state(apparent_power);
+  }
   ESP_LOGV(TAG, "BL0940: U %fV, I %fA, P %fW, Cnt %" PRId32 ", ∫P %fkWh, T1 %f°C, T2 %f°C", v_rms, i_rms, watt, cf_cnt,
            total_energy_consumption, tps1, tps2);
 }
@@ -128,6 +135,7 @@ void BL0940::dump_config() {  // NOLINT(readability-function-cognitive-complexit
   LOG_SENSOR("", "Energy", this->energy_sensor_);
   LOG_SENSOR("", "Internal temperature", this->internal_temperature_sensor_);
   LOG_SENSOR("", "External temperature", this->external_temperature_sensor_);
+  LOG_SENSOR("", "Apparent Power", this->apparent_power_sensor_);  
 }
 
 uint32_t BL0940::to_uint32_t(ube24_t input) { return input.h << 16 | input.m << 8 | input.l; }
