@@ -7,6 +7,7 @@
 namespace esphome {
 namespace bl0940 {
 
+// Default Values - Overrides can be done from ESPHome Front end (current_reference: ,energy_reference: ,power_reference: & voltage_reference:)
 static const float BL0940_PREF = 1430;
 static const float BL0940_UREF = 33000;
 static const float BL0940_IREF = 275000;  // 2750 from tasmota. Seems to generate values 100 times too high
@@ -67,6 +68,22 @@ class BL0940 : public PollingComponent, public uart::UARTDevice {
   void set_external_temperature_sensor(sensor::Sensor *external_temperature_sensor) {
     external_temperature_sensor_ = external_temperature_sensor;
   }
+  void set_current_reference(float current_ref) {
+    this->current_reference_ = current_ref;
+    this->current_reference_set_ = true;
+  }
+  void set_energy_reference(float energy_ref) {
+    this->energy_reference_ = energy_ref;
+    this->energy_reference_set_ = true;
+  }
+  void set_power_reference(float power_ref) {
+    this->power_reference_ = power_ref;
+    this->power_reference_set_ = true;
+  }
+  void set_voltage_reference(float voltage_ref) {
+    this->voltage_reference_ = voltage_ref;
+    this->voltage_reference_set_ = true;
+  }
 
   void loop() override;
 
@@ -88,12 +105,16 @@ class BL0940 : public PollingComponent, public uart::UARTDevice {
   float max_temperature_diff_{5};
   // Divide by this to turn into Watt
   float power_reference_ = BL0940_PREF;
+  bool power_reference_set_ = false;
   // Divide by this to turn into Volt
   float voltage_reference_ = BL0940_UREF;
+  bool voltage_reference_set_ = false;
   // Divide by this to turn into Ampere
   float current_reference_ = BL0940_IREF;
+  bool current_reference_set_ = false;
   // Divide by this to turn into kWh
   float energy_reference_ = BL0940_EREF;
+  bool energy_reference_set_ = false;
 
   float update_temp_(sensor::Sensor *sensor, ube16_t packed_temperature) const;
 
