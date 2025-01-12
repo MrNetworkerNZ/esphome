@@ -120,6 +120,14 @@ void BL0940::received_package_(const DataPacket *data) const {
            total_energy_consumption, tps1, tps2);
 }
 
+void BL0940::caculate_extras() { 
+  const float apparent_power = v_rms * i_rms;
+
+  if (apparent_power_sensor_ != nullptr) {
+    apparent_power_sensor_->publish_state(apparent_power);
+  }
+}
+
 void BL0940::dump_config() {  // NOLINT(readability-function-cognitive-complexity)
   ESP_LOGCONFIG(TAG, "BL0940:");
   LOG_SENSOR("", "Voltage", this->voltage_sensor_);
